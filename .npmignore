@@ -1,3 +1,4 @@
 test/
 bower.json
 .travis.yml
+.github/

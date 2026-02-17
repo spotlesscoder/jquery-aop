@@ -1,109 +1,106 @@
-$(document).ready(function(){
+$(document).ready(function () {
 
 	module("Basic weaving");
 
-	(function() {
-		testAop('built-in objects', {target: String, method: 'indexOf' }, function() { 
+	(function () {
+		testAop('built-in objects', { target: String, method: 'indexOf' }, function () {
 			expect(6);
-			return "test".indexOf('e'); 
-		} ); 
+			return "test".indexOf('e');
+		});
 	})();
 
-	(function() {
+	(function () {
 
-		function Prototyped( str )
-		{
+		function Prototyped(str) {
 			this.ID = str;
 		}
 
-		Prototyped.prototype.getID = function() {
+		Prototyped.prototype.getID = function () {
 			return this.ID;
 		}
 
-		testAop('custom objects with prototype and prototyped function', {target: Prototyped, method: 'getID' }, function() { 
+		testAop('custom objects with prototype and prototyped function', { target: Prototyped, method: 'getID' }, function () {
 			expect(6);
 			var custom = new Prototyped("testID");
 			return custom.getID();
-		} ); 
+		});
 
 	})();
 
-	(function() {
+	(function () {
 
-		function PrototypedWithInstanceFunctions( str )
-		{
+		function PrototypedWithInstanceFunctions(str) {
 			this.ID = str;
 		}
 
-		PrototypedWithInstanceFunctions.prototype.getID = function() {
+		PrototypedWithInstanceFunctions.prototype.getID = function () {
 			return this.ID;
 		}
 
 		var instance = new PrototypedWithInstanceFunctions("testID");
 
-		instance.getIDInstance = function() {
+		instance.getIDInstance = function () {
 			return this.ID;
 		}
 
-		testAop('custom objects with prototype but instance-function', {target: instance, method: 'getIDInstance' }, function() { 
+		testAop('custom objects with prototype but instance-function', { target: instance, method: 'getIDInstance' }, function () {
 			expect(6);
 			return instance.getIDInstance();
-		} ); 
+		});
 
 	})();
 
 
-	(function() {
+	(function () {
 
-		function Custom( str )
-		{
+		function Custom(str) {
 			this.ID = str;
 		}
 
 		var custom = new Custom("testID");
-		custom.GetData = function(index) {
+		custom.GetData = function (index) {
 			return this.ID + ":" + index
 		}
 
-		testAop('custom objects without prototype', {target: custom, method: 'GetData' }, function() { 
+		testAop('custom objects without prototype', { target: custom, method: 'GetData' }, function () {
 			expect(6);
 			return custom.GetData(10);
-		} ); 
+		});
 
 	})();
 
 
-	(function() {
+	(function () {
 
-		function Dog() {}
-		Dog.prototype.bark = function() { 
+		function Dog() { }
+		Dog.prototype.bark = function () {
 			return 'bark';
 		}
-		
+
 		var dog = new Dog();
 
-		testAop('issue #3', ['after'], {target: dog, method: 'bark' }, function() { 
+		testAop('issue #3', ['after'], { target: dog, method: 'bark' }, function () {
 			expect(4);
 			return dog.bark();
-		} ); 
+		});
 
 	})();
 
 
-	test("Testing issue #2 - Around-advices allows argument manipulation (add)", function() {
+	test("Testing issue #2 - Around-advices allows argument manipulation (add)", function () {
 
-		function Thing() {}
-		
-		Thing.prototype.doSomething = function() { 
+		function Thing() { }
+
+		Thing.prototype.doSomething = function () {
 			return Array.prototype.slice.call(arguments).join(',');
 		}
-		
-		var aspects = jQuery.aop.around( {target: Thing, method: 'doSomething' }, 
-			function(inv) { 
+
+		var aspects = jQuery.aop.around({ target: Thing, method: 'doSomething' },
+			function (inv) {
 				inv.arguments[inv.arguments.length] = "extra-arg";
 				return inv.proceed();
-			} 
-		); 
+			}
+		);
 
 		var thing = new Thing();
 		var result = thing.doSomething("arg1", "arg2", "arg3");
@@ -120,20 +117,20 @@ $(document).ready(function(){
 
 
 
-	test("Testing issue #2 - Around-advices allows argument manipulation (remove)", function() {
+	test("Testing issue #2 - Around-advices allows argument manipulation (remove)", function () {
 
-		function Thing() {}
-		
-		Thing.prototype.doSomething = function() { 
+		function Thing() { }
+
+		Thing.prototype.doSomething = function () {
 			return Array.prototype.slice.call(arguments).join(',');
 		}
-		
-		var aspects = jQuery.aop.around( {target: Thing, method: 'doSomething' }, 
-			function(inv) { 
-				inv.arguments = inv.arguments.splice(inv.arguments.length-1, 1);
+
+		var aspects = jQuery.aop.around({ target: Thing, method: 'doSomething' },
+			function (inv) {
+				inv.arguments = inv.arguments.splice(inv.arguments.length - 1, 1);
 				return inv.proceed();
-			} 
-		); 
+			}
+		);
 
 		var thing = new Thing();
 		var result = thing.doSomething("arg1", "arg2", "arg3");
@@ -148,14 +145,14 @@ $(document).ready(function(){
 
 	});
 
-	test("Testing issue #7 - Advice on document functions", function() {
+	test("Testing issue #7 - Advice on document functions", function () {
 		expect(1);
 
-		var aspects = jQuery.aop.after( {target: document, method: 'getElementById' }, 
-			function(result) { 
+		var aspects = jQuery.aop.after({ target: document, method: 'getElementById' },
+			function (result) {
 				ok(true, 'Advice invoked');
-			} 
-		); 
+			}
+		);
 
 		document.getElementById('sample');
 
@@ -170,7 +167,7 @@ $(document).ready(function(){
 	});
 
 
-	test("Testing issue #8 - Advice works properly across frames and keeps proper scope on target", function() {
+	test("Testing issue #8 - Advice works properly across frames and keeps proper scope on target", function () {
 		expect(3);
 
 		var container = document.createElement('div');
@@ -183,12 +180,12 @@ $(document).ready(function(){
 
 		var obj = frame.contentWindow.window.SomeTestObject;
 
-		var aspects = jQuery.aop.after( {target: obj, method: 'TestFunction' }, 
-			function(result) { 
+		var aspects = jQuery.aop.after({ target: obj, method: 'TestFunction' },
+			function (result) {
 				ok(true, 'Advice invoked');
 				return result;
-			} 
-		); 
+			}
+		);
 
 		var result = obj.TestFunction();
 
@@ -207,64 +204,49 @@ $(document).ready(function(){
 	});
 
 
-	(function() {
+	(function () {
 		var obj = $('#qunit-header');
-		testAop('advice on jQuery.get', {target: obj, method: 'get' }, function() { 
+		testAop('advice on jQuery.get', { target: obj, method: 'get' }, function () {
 			expect(6);
-			return obj.get(0).innerText; 
-		} ); 
+			return obj.get(0).innerText;
+		});
 	})();
 
 
-	(function() {
-		var testFunction = (function(){
-			var func = function(){};
-			func.show = function(){ return 'test'; }
+	(function () {
+		var testFunction = (function () {
+			var func = function () { };
+			func.show = function () { return 'test'; }
 			return func;
-		})();			
+		})();
 
-		testAop('issue #9 - Advice on functions as target', {target: testFunction, method: 'show' }, function() { 
+		testAop('issue #9 - Advice on functions as target', { target: testFunction, method: 'show' }, function () {
 			expect(6);
 
-			return testFunction.show(); 
-		} ); 
+			return testFunction.show();
+		});
 	})();
 
-	(function() {
-		var testFunction = (function(){
-			var func = function(){};
-			func.show = function(){ return 'test'; }
-			func.show2 = function(){ return 'test'; }
-			return func;
-		})();			
-
-		testAop('issue #9 - Advice on functions as target using regex', {target: testFunction, method: /show/ }, function() { 
-			expect(9);
-
-			return testFunction.show() + testFunction.show2(); 
-		} ); 
-	})();
-
-	test("Testing after advice only on successful execution", function() {
+	test("Testing after advice only on successful execution", function () {
 		expect(1);
 
-		function Thing() {}
-		
-		Thing.prototype.failingMethod = function() { 
+		function Thing() { }
+
+		Thing.prototype.failingMethod = function () {
 			throw 'Some error';
 		}
-		
-		var aspects = jQuery.aop.after( {target: Thing, method: 'failingMethod' }, 
-			function(result) {
+
+		var aspects = jQuery.aop.after({ target: Thing, method: 'failingMethod' },
+			function (result) {
 				ok(true, 'After advice invoked');
 				return result;
-			} 
-		); 
+			}
+		);
 
 		var thing = new Thing();
 		try {
 			thing.failingMethod();
-		} catch (e) {}
+		} catch (e) { }
 
 
 		if (aspects.length > 0)
@@ -277,21 +259,21 @@ $(document).ready(function(){
 
 	});
 
-	test("Testing after advice does not catch exceptions", function() {
+	test("Testing after advice does not catch exceptions", function () {
 		expect(1);
 
-		function Thing() {}
-		
-		Thing.prototype.failingMethod = function() { 
+		function Thing() { }
+
+		Thing.prototype.failingMethod = function () {
 			throw 'Some error';
 		}
-		
-		var aspects = jQuery.aop.after( {target: Thing, method: 'failingMethod' }, 
-			function(result) {
+
+		var aspects = jQuery.aop.after({ target: Thing, method: 'failingMethod' },
+			function (result) {
 				ok(false, 'This should never execute');
 				return result;
-			} 
-		); 
+			}
+		);
 
 		var thing = new Thing();
 		var exceptionThrown = null

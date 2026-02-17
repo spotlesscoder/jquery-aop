@@ -1,68 +1,75 @@
-$(document).ready(function(){
+$(document).ready(function () {
 
 	module("Weaving with regex");
 
-	(function() {
+	(function () {
 
-		function Prototyped( str )
-		{
+		function Prototyped(str) {
 			this.ID = str;
 		}
 
-		Prototyped.prototype.getID = function() {
+		Prototyped.prototype.getID = function () {
 			return this.ID;
 		}
 
-		Prototyped.prototype.getIDSecond = function() {
+		Prototyped.prototype.getIDSecond = function () {
 			return this.ID + "(bis)";
 		}
 
-		testAop('custom objects with prototype and prototyped function using regex', {target: Prototyped, method: 'getI' }, function() { 
+		testAop('custom objects with prototype and prototyped function using regex', { target: Prototyped, method: 'getI' }, function () {
 			expect(9);
 			var custom = new Prototyped("testID");
 			return custom.getID() + " - " + custom.getIDSecond();
-		} ); 
+		});
 	})();
 
-	(function() {
+	(function () {
 
-		testAop('global functions with regex match', {target: window, method: /Get(\d+)/ }, function() { 
+		testAop('global functions with regex match', { target: window, method: /Get(\d+)/ }, function () {
 			expect(15);
 			return Get1() + Get2() + Get3() + Get4() + Get() + GetString();
-		}, function() {
+		}, function () {
 
-			window.Get1 = function() 
-			{
+			window.Get1 = function () {
 				return "1";
 			}
 
-			window.Get2 = function() 
-			{
+			window.Get2 = function () {
 				return "2";
 			}
 
-			window.Get3 = function() 
-			{
+			window.Get3 = function () {
 				return "3";
 			}
 
-			window.Get4 = function() 
-			{
+			window.Get4 = function () {
 				return "4";
 			}
 
-			window.Get = function() 
-			{
+			window.Get = function () {
 				return "-";
 			}
 
-			window.GetString = function() 
-			{
+			window.GetString = function () {
 				return "empty";
 			}
 
-		}); 
+		});
 
 	})();
 
+	(function () {
+		var testFunction = (function () {
+			var func = function () { };
+			func.show = function () { return 'test'; }
+			func.show2 = function () { return 'test'; }
+			return func;
+		})();
+
+		testAop('issue #9 - Advice on functions as target using regex', { target: testFunction, method: /show/ }, function () {
+			expect(9);
+
+			return testFunction.show() + testFunction.show2();
+		});
+	})();
 });

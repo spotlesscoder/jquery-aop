@@ -4,7 +4,7 @@
     "description": "Add features of aspect-oriented programming (AOP) to jQuery.",
     "main": "bin/aop.min.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "node test/run-test.js"
     },
     "repository": {
         "type": "git",
@@ -24,5 +24,8 @@
     "homepage": "https://github.com/gonzalocasas/jquery-aop#readme",
     "peerDependencies": {
         "jquery": ">=1.5"
+    },
+    "devDependencies": {
+        "puppeteer": "^24.37.3"
     }
 }

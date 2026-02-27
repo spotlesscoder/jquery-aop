@@ -15,6 +15,12 @@ jQuery AOP is a very small plugin that adds [AOP](http://en.wikipedia.org/wiki/A
   * **Just 1091 bytes!** (Packed and Gzipped)
   * Integrated into jQuery.
 
+## Installation
+
+```bash
+npm install jquery-aop
+```
+
 ## Quick Start
 
 Starting with jQuery AOP is really easy!
